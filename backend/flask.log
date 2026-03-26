@@ -1,0 +1,156 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+ * Restarting with watchdog (windowsapi)
+ * Debugger is active!
+ * Debugger PIN: 107-578-024
+ * Detected change in 'c:\\skillmatch ai\\backend\\venv\\Lib\\site-packages\\pymongo\\synchronous\\settings.py', reloading
+ * Detected change in 'c:\\skillmatch ai\\backend\\venv\\Lib\\site-packages\\pymongo\\synchronous\\mongo_client.py', reloading
+Exception in thread Thread-2 (serve_forever):
+Traceback (most recent call last):
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 1045, in _bootstrap_inner
+    self.run()
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 810, in serve_forever
+    super().serve_forever(poll_interval=poll_interval)
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\socketserver.py", line 233, in serve_forever
+    ready = selector.select(poll_interval)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\selectors.py", line 323, in select
+    r, w, _ = self._select(self._readers, self._writers, [], timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\selectors.py", line 314, in _select
+    r, w, x = select.select(r, w, w, timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [WinError 10038] An operation was attempted on something that is not a socket
+ * Restarting with watchdog (windowsapi)
+ * Debugger is active!
+ * Debugger PIN: 107-578-024
+127.0.0.1 - - [26/Mar/2026 21:53:46] "OPTIONS /api/jobs/?skill=&location= HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:53:46] "OPTIONS /api/enhance/search-history HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:53:46] "OPTIONS /api/jobs/?skill=&location= HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:53:46] "OPTIONS /api/enhance/search-history HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:53:46] "GET /api/jobs/?skill=&location= HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:53:46] "GET /api/enhance/search-history HTTP/1.1" 422 -
+127.0.0.1 - - [26/Mar/2026 21:53:46] "GET /api/jobs/?skill=&location= HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:53:47] "GET /api/enhance/search-history HTTP/1.1" 422 -
+127.0.0.1 - - [26/Mar/2026 21:54:24] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:24] "POST /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:24] "OPTIONS /api/jobs/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "OPTIONS /api/jobs/recruiter/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "OPTIONS /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "OPTIONS /api/jobs/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "OPTIONS /api/jobs/recruiter/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "OPTIONS /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "GET /api/jobs/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "GET /api/jobs/recruiter/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "GET /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "GET /api/jobs/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "GET /api/jobs/recruiter/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:54:25] "GET /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:55:13] "OPTIONS /api/jobs/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:55:14] "POST /api/jobs/ HTTP/1.1" 201 -
+127.0.0.1 - - [26/Mar/2026 21:55:14] "GET /api/jobs/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:55:50] "OPTIONS /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:55:50] "POST /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:55:51] "GET /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:17] "OPTIONS /api/enhance/chatbot HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:17] "POST /api/enhance/chatbot HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "OPTIONS /api/jobs/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "OPTIONS /api/jobs/recruiter/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "OPTIONS /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "OPTIONS /api/jobs/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "OPTIONS /api/jobs/recruiter/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "OPTIONS /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "GET /api/jobs/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "GET /api/jobs/recruiter/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "GET /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "GET /api/jobs/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "GET /api/jobs/recruiter/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:56:32] "GET /api/enhance/company-profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:08] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:09] "POST /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:09] "OPTIONS /api/resume/profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:09] "OPTIONS /api/jobs/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:09] "OPTIONS /api/resume/profile HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:09] "OPTIONS /api/jobs/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:09] "GET /api/resume/profile HTTP/1.1" 404 -
+127.0.0.1 - - [26/Mar/2026 21:57:09] "GET /api/jobs/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:09] "GET /api/resume/profile HTTP/1.1" 404 -
+127.0.0.1 - - [26/Mar/2026 21:57:10] "GET /api/jobs/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:24] "OPTIONS /api/resume/upload HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:25] "POST /api/resume/upload HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:25] "OPTIONS /api/match/recommendations HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:25] "GET /api/match/recommendations HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:33] "OPTIONS /api/enhance/resume-score/69c55deaa6bd6f3949cd8a5c HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:57:33] "GET /api/enhance/resume-score/69c55deaa6bd6f3949cd8a5c HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:58:42] "OPTIONS /api/enhance/resume-score/69c55bdb567f1acedfbe1709 HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 21:58:43] "GET /api/enhance/resume-score/69c55bdb567f1acedfbe1709 HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:00:10] "OPTIONS /api/jobs/69c55deaa6bd6f3949cd8a5c/apply HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:00:11] "POST /api/jobs/69c55deaa6bd6f3949cd8a5c/apply HTTP/1.1" 201 -
+127.0.0.1 - - [26/Mar/2026 22:00:11] "OPTIONS /api/jobs/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:00:11] "GET /api/jobs/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:00:15] "OPTIONS /api/jobs/69c55bdb567f1acedfbe1709/apply HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:00:15] "POST /api/jobs/69c55bdb567f1acedfbe1709/apply HTTP/1.1" 201 -
+127.0.0.1 - - [26/Mar/2026 22:00:15] "GET /api/jobs/applications HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:00:23] "OPTIONS /api/enhance/interview-prep HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:00:23] "OPTIONS /api/enhance/interview-prep HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:00:23] "GET /api/enhance/interview-prep HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:00:23] "GET /api/enhance/interview-prep HTTP/1.1" 200 -
+ * Detected change in 'c:\\skillmatch ai\\backend\\modules\\enhance.py', reloading
+Exception in thread Thread-2 (serve_forever):
+Traceback (most recent call last):
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 1045, in _bootstrap_inner
+    self.run()
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 810, in serve_forever
+    super().serve_forever(poll_interval=poll_interval)
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\socketserver.py", line 233, in serve_forever
+    ready = selector.select(poll_interval)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\selectors.py", line 323, in select
+    r, w, _ = self._select(self._readers, self._writers, [], timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\selectors.py", line 314, in _select
+    r, w, x = select.select(r, w, w, timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [WinError 10038] An operation was attempted on something that is not a socket
+ * Restarting with watchdog (windowsapi)
+ * Debugger is active!
+ * Debugger PIN: 107-578-024
+ * Detected change in 'c:\\skillmatch ai\\backend\\modules\\enhance.py', reloading
+ * Detected change in 'c:\\skillmatch ai\\backend\\modules\\enhance.py', reloading
+ * Detected change in 'c:\\skillmatch ai\\backend\\modules\\enhance.py', reloading
+Exception in thread Thread-2 (serve_forever):
+Traceback (most recent call last):
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 1045, in _bootstrap_inner
+    self.run()
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 810, in serve_forever
+    super().serve_forever(poll_interval=poll_interval)
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\socketserver.py", line 233, in serve_forever
+    ready = selector.select(poll_interval)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\selectors.py", line 323, in select
+    r, w, _ = self._select(self._readers, self._writers, [], timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Preethu\AppData\Local\Programs\Python\Python311\Lib\selectors.py", line 314, in _select
+    r, w, x = select.select(r, w, w, timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [WinError 10038] An operation was attempted on something that is not a socket
+ * Restarting with watchdog (windowsapi)
+ * Debugger is active!
+ * Debugger PIN: 107-578-024
+127.0.0.1 - - [26/Mar/2026 22:04:38] "OPTIONS /api/enhance/interview-prep HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:04:38] "OPTIONS /api/enhance/interview-prep HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:04:39] "GET /api/enhance/interview-prep HTTP/1.1" 200 -
+127.0.0.1 - - [26/Mar/2026 22:04:39] "GET /api/enhance/interview-prep HTTP/1.1" 200 -
+ * Detected change in 'c:\\skillmatch ai\\backend\\venv\\Lib\\site-packages\\werkzeug\\serving.py', reloading
+ * Restarting with watchdog (windowsapi)
+ * Debugger is active!
+ * Debugger PIN: 107-578-024

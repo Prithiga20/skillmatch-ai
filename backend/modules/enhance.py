@@ -73,40 +73,172 @@ def skill_gap(job_id):
 @jwt_required()
 def interview_prep():
     user_id = get_jwt_identity()
+    skill = request.args.get("skill", "").strip().lower()
     resume = resumes_col.find_one({"user_id": user_id})
+
     questions = list(DEFAULT_QUESTIONS)
     skills_used = []
-    if resume and resume.get("skills"):
+
+    if skill:
+        # Skill selected manually
+        if skill in INTERVIEW_QUESTIONS:
+            questions.extend(INTERVIEW_QUESTIONS[skill])
+            skills_used = [skill]
+        else:
+            skills_used = [skill]
+    elif resume and resume.get("skills"):
+        # Auto from resume
         skills = resume["skills"] if isinstance(resume["skills"], list) else [s.strip().lower() for s in resume["skills"].split(",") if s.strip()]
-        for skill in skills:
-            if skill in INTERVIEW_QUESTIONS:
-                questions.extend(INTERVIEW_QUESTIONS[skill])
-                skills_used.append(skill)
-    return jsonify({"skills_covered": skills_used, "questions": list(dict.fromkeys(questions))})
+        for s in skills:
+            if s in INTERVIEW_QUESTIONS:
+                questions.extend(INTERVIEW_QUESTIONS[s])
+                skills_used.append(s)
+
+    return jsonify({
+        "skills_covered": skills_used,
+        "available_skills": list(INTERVIEW_QUESTIONS.keys()),
+        "questions": list(dict.fromkeys(questions))
+    })
+
+
+@enhance_bp.route("/interview-evaluate", methods=["POST"])
+@jwt_required()
+def interview_evaluate():
+    data = request.get_json()
+    submissions = data.get("submissions", [])  # [{question, answer, skill}]
+
+    KEYWORDS = {
+        "python": ["decorator", "generator", "gil", "list", "tuple", "set", "memory", "lambda", "iterator", "class"],
+        "machine learning": ["supervised", "unsupervised", "overfitting", "cross-validation", "gradient", "bias", "variance", "model", "training", "accuracy"],
+        "react": ["virtual dom", "state", "props", "hooks", "useeffect", "usestate", "component", "render", "jsx", "lifecycle"],
+        "sql": ["join", "index", "normalization", "acid", "where", "having", "primary key", "foreign key", "query", "table"],
+        "javascript": ["closure", "promise", "async", "await", "event", "scope", "hoisting", "prototype", "callback", "dom"],
+        "java": ["jvm", "oop", "inheritance", "polymorphism", "interface", "abstract", "thread", "garbage", "exception", "collection"],
+        "aws": ["ec2", "s3", "lambda", "vpc", "rds", "dynamodb", "iam", "cloudwatch", "auto scaling", "region"],
+        "docker": ["container", "image", "dockerfile", "compose", "volume", "network", "registry", "kubernetes", "layer", "daemon"],
+    }
+
+    HR_KEYWORDS = ["experience", "team", "challenge", "goal", "strength", "weakness", "achieve", "learn", "work", "project", "skill", "improve", "success", "problem", "solution"]
+
+    results = []
+    total_score = 0
+
+    for item in submissions:
+        question = item.get("question", "")
+        answer = item.get("answer", "").strip()
+        skill = item.get("skill", "").lower()
+        score = 0
+        feedback = []
+
+        if not answer:
+            results.append({"question": question, "score": 0, "feedback": "No answer provided.", "grade": "F"})
+            continue
+
+        word_count = len(answer.split())
+
+        # Length scoring (max 40)
+        if word_count >= 80:
+            score += 40
+            feedback.append("Excellent answer length.")
+        elif word_count >= 40:
+            score += 30
+            feedback.append("Good answer length.")
+        elif word_count >= 15:
+            score += 15
+            feedback.append("Answer is a bit short. Try to elaborate more.")
+        else:
+            score += 5
+            feedback.append("Answer too brief. Aim for at least 40 words.")
+
+        # Keyword scoring (max 40)
+        answer_lower = answer.lower()
+        kw_list = KEYWORDS.get(skill, HR_KEYWORDS)
+        matched_kw = [k for k in kw_list if k in answer_lower]
+        kw_score = min(40, len(matched_kw) * 8)
+        score += kw_score
+        if matched_kw:
+            feedback.append(f"Good use of keywords: {', '.join(matched_kw[:4])}.")
+        else:
+            feedback.append("Try to include more relevant technical keywords.")
+
+        # Structure scoring (max 20)
+        has_structure = any(c in answer for c in [".", ",", ":", "-", "\n"])
+        if has_structure and word_count > 20:
+            score += 20
+            feedback.append("Well-structured answer.")
+        else:
+            score += 5
+            feedback.append("Structure your answer with clear sentences.")
+
+        score = min(100, score)
+        grade = "A" if score >= 85 else "B" if score >= 70 else "C" if score >= 50 else "D" if score >= 30 else "F"
+        total_score += score
+        results.append({"question": question, "score": score, "grade": grade, "feedback": " ".join(feedback)})
+
+    overall = round(total_score / len(submissions), 1) if submissions else 0
+    overall_grade = "A" if overall >= 85 else "B" if overall >= 70 else "C" if overall >= 50 else "D" if overall >= 30 else "F"
+
+    return jsonify({
+        "results": results,
+        "overall_score": overall,
+        "overall_grade": overall_grade,
+        "total_questions": len(submissions),
+        "answered": len([s for s in submissions if s.get("answer", "").strip()])
+    })
 
 
 @enhance_bp.route("/chatbot", methods=["POST"])
 def chatbot():
     data = request.get_json()
     message = data.get("message", "").lower().strip()
-    responses = {
-        "resume": "To improve your resume: use action verbs, quantify achievements, tailor it to each job, and keep it to 1-2 pages.",
-        "interview": "For interviews: research the company, practice STAR method answers, prepare questions to ask, and dress professionally.",
-        "salary": "Research salary ranges on Glassdoor or LinkedIn. Consider your experience, location, and industry when negotiating.",
-        "skills": "Focus on in-demand skills like Python, cloud computing, data analysis, and communication. Upload your resume to see your skill gaps.",
-        "job search": "Use LinkedIn, Naukri, Indeed, and company career pages. Network actively and tailor your applications.",
-        "career": "Set clear career goals, build relevant skills, network with professionals, and seek mentorship in your field.",
-        "cover letter": "A good cover letter: addresses the hiring manager by name, highlights 2-3 key achievements, and explains why you want this specific role.",
-        "linkedin": "Optimize your LinkedIn: professional photo, compelling headline, detailed experience, and 500+ connections.",
-        "rejection": "Rejection is normal. Ask for feedback, improve your application, and keep applying. Persistence is key.",
-        "fresher": "As a fresher: build projects, contribute to open source, do internships, and highlight academic achievements.",
-    }
-    reply = "I can help with: resume tips, interview preparation, salary negotiation, skill development, job search strategies, and career guidance. What would you like to know?"
-    for keyword, response in responses.items():
-        if keyword in message:
+
+    RULES = [
+        # Resume
+        (["resume", "cv", "curriculum"], "📄 Resume Tips:\n• Use strong action verbs (Led, Built, Improved, Achieved)\n• Quantify achievements — e.g. 'Increased sales by 30%'\n• Tailor your resume for each job description\n• Keep it to 1–2 pages max\n• Use a clean, ATS-friendly format\n• Add a strong summary at the top"),
+        (["cover letter", "covering letter"], "✉️ Cover Letter Tips:\n• Address the hiring manager by name if possible\n• Open with a strong hook — why you want THIS role\n• Highlight 2–3 key achievements relevant to the job\n• Keep it under 1 page\n• End with a confident call to action"),
+        # Interview
+        (["interview", "prepare for interview", "interview tips"], "🎯 Interview Preparation:\n• Research the company — mission, products, recent news\n• Practice STAR method (Situation, Task, Action, Result)\n• Prepare 5 questions to ask the interviewer\n• Dress professionally and arrive early\n• Practice common questions: strengths, weaknesses, goals\n• Use our Interview Prep module for skill-based practice!"),
+        (["star method", "star technique"], "⭐ STAR Method:\n• Situation — Set the context\n• Task — Describe your responsibility\n• Action — Explain what YOU did specifically\n• Result — Share the measurable outcome\n\nExample: 'I led a team of 4 (S), tasked with reducing load time (T), I optimized queries (A), resulting in 40% faster performance (R).'"),
+        # Salary
+        (["salary", "negotiate", "pay", "compensation", "ctc"], "💰 Salary Negotiation:\n• Research market rates on Glassdoor, LinkedIn, Levels.fyi\n• Never give a number first — ask for their range\n• Anchor high — you can always come down\n• Consider the full package: bonus, equity, benefits\n• Practice your pitch: 'Based on my experience and market data, I'm targeting X'\n• It's always okay to ask for time to consider an offer"),
+        # Skills
+        (["skill", "learn", "upskill", "course", "certification"], "🚀 Skill Development:\n• Top in-demand skills: Python, SQL, React, AWS, Docker, ML\n• Use free platforms: freeCodeCamp, Coursera, edX, YouTube\n• Build real projects — employers value portfolios\n• Get certified: AWS, Google, Microsoft certs add credibility\n• Use our Skill Gap Analyzer to find what you're missing!"),
+        (["python"], "🐍 Python Career Tips:\n• Python is #1 for Data Science, ML, Backend, Automation\n• Learn: basics → OOP → libraries (pandas, numpy, flask)\n• Build projects: web scraper, data dashboard, REST API\n• Top certifications: PCEP, PCAP (Python Institute)"),
+        (["data science", "machine learning", "ai", "artificial intelligence"], "🤖 Data Science / ML Path:\n• Learn: Python → Statistics → pandas/numpy → sklearn → Deep Learning\n• Key tools: Jupyter, TensorFlow, PyTorch, Tableau\n• Build a portfolio: Kaggle competitions, GitHub projects\n• Roles: Data Analyst → Data Scientist → ML Engineer"),
+        # Job Search
+        (["job search", "find job", "job hunt", "apply", "application"], "🔍 Job Search Strategy:\n• Use: LinkedIn, Indeed, Naukri, Glassdoor, AngelList\n• Apply to 10–15 jobs/week for best results\n• Customize your resume for each application\n• Follow up after 1 week if no response\n• Network — 70% of jobs are filled through connections\n• Use SkillMatch AI to find jobs matching your skills!"),
+        (["linkedin", "linked in", "profile"], "💼 LinkedIn Optimization:\n• Professional headshot (increases views by 14x)\n• Headline: 'Role | Skills | Value' not just your job title\n• Write a compelling About section (first 3 lines matter most)\n• Add all skills and get endorsements\n• Post content weekly to increase visibility\n• Connect with recruiters in your target companies"),
+        (["network", "networking"], "🤝 Networking Tips:\n• Attend industry meetups, hackathons, webinars\n• Connect with alumni from your college on LinkedIn\n• Send personalized connection requests (not generic)\n• Offer value before asking for favors\n• Informational interviews are powerful — just ask!"),
+        # Career
+        (["career change", "switch career", "career switch"], "🔄 Career Change Tips:\n• Identify transferable skills from your current role\n• Take online courses to bridge skill gaps\n• Build a portfolio in the new field\n• Start with freelance/side projects to gain experience\n• Network with people already in your target field\n• Be patient — career transitions take 6–12 months typically"),
+        (["career", "growth", "promotion", "career path"], "📈 Career Growth:\n• Set clear 1-year and 5-year goals\n• Ask for feedback regularly from your manager\n• Take on stretch assignments beyond your role\n• Build both technical and soft skills\n• Find a mentor in your field\n• Document your achievements for performance reviews"),
+        (["fresher", "fresh graduate", "entry level", "no experience", "beginner"], "🎓 Fresher Career Tips:\n• Build projects and put them on GitHub\n• Contribute to open source projects\n• Do internships — even unpaid ones build experience\n• Highlight academic projects and achievements\n• Get 1–2 certifications in your field\n• Apply broadly — your first job doesn't have to be perfect"),
+        # Wellbeing
+        (["rejection", "rejected", "failed", "not selected"], "💪 Dealing with Rejection:\n• Rejection is a normal part of job searching — everyone faces it\n• Ask for feedback when possible\n• Review and improve your resume/interview skills\n• Keep a consistent application routine\n• Celebrate small wins — every interview is practice\n• Most people apply to 50–100 jobs before landing one"),
+        (["stress", "anxiety", "burnout", "overwhelm"], "🧘 Managing Job Search Stress:\n• Set a daily limit — apply to 5 jobs, then stop\n• Take breaks and maintain hobbies\n• Talk to friends, family, or a mentor\n• Exercise regularly — it helps with anxiety\n• Remember: job searching is a skill that improves with practice\n• You WILL find the right opportunity!"),
+        (["remote", "work from home", "wfh", "hybrid"], "🏠 Remote Work Tips:\n• Highlight remote-friendly skills: communication, self-management\n• Use: Remote.co, We Work Remotely, FlexJobs\n• Set up a professional home workspace\n• Be proactive in communication with remote teams\n• Time zone flexibility is a big plus for global roles"),
+        (["freelance", "freelancing", "gig"], "💻 Freelancing Tips:\n• Start on: Upwork, Fiverr, Toptal, Freelancer\n• Build a strong portfolio with 3–5 sample projects\n• Set competitive rates initially to build reviews\n• Specialize in a niche — generalists earn less\n• Always have a contract and milestone-based payments"),
+    ]
+
+    reply = None
+    for keywords, response in RULES:
+        if any(kw in message for kw in keywords):
             reply = response
             break
-    return jsonify({"reply": reply})
+
+    if not reply:
+        # Greeting detection
+        if any(g in message for g in ["hi", "hello", "hey", "good morning", "good evening", "howdy"]):
+            reply = "👋 Hello! I'm your Career Guidance Assistant. I can help you with:\n\n• 📄 Resume & Cover Letter Tips\n• 🎯 Interview Preparation\n• 💰 Salary Negotiation\n• 🚀 Skill Development\n• 🔍 Job Search Strategies\n• 📈 Career Growth\n\nWhat would you like help with today?"
+        elif any(t in message for t in ["thank", "thanks", "great", "awesome", "helpful"]):
+            reply = "😊 You're welcome! Feel free to ask anything else. Good luck with your career journey! 🚀"
+        else:
+            reply = "🤔 I'm not sure about that specific query. I can help with:\n\n• Resume tips\n• Interview preparation\n• Salary negotiation\n• Skill development\n• Job search strategies\n• Career guidance\n• Networking tips\n• Fresher advice\n\nTry asking something like 'How do I improve my resume?' or 'Interview tips'"
+
+    return jsonify({"reply": reply, "suggestions": [
+        "Resume tips", "Interview advice", "Salary negotiation",
+        "Skill development", "Job search", "Career growth", "Fresher tips", "Networking"
+    ]})
 
 
 # Feature 6: Resume Score vs Job

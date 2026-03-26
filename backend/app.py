@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
+from datetime import timedelta
 import os
 
 load_dotenv()
@@ -9,6 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "dev-jwt-secret")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=7)
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 CORS(app, origins=["http://localhost:3000", "http://localhost:3001"], supports_credentials=True,
