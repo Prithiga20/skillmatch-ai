@@ -1,14 +1,45 @@
 import { useState } from "react";
 
+const STORAGE_KEY = "skillmatch_resume";
+
 export default function ResumeBuilder() {
-  const [form, setForm] = useState({
-    name: "", email: "", phone: "", location: "",
-    summary: "", skills: "", experience: "", education: "", certifications: "",
+  const [form, setForm] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : {
+      name: "", email: "", phone: "", location: "",
+      summary: "", skills: "", experience: "", education: "", certifications: "",
+    };
   });
+  const [saved, setSaved] = useState(false);
 
   const update = (field, val) => setForm({ ...form, [field]: val });
 
-  const handlePrint = () => window.print();
+  const handleSave = () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleDownload = () => {
+    const content = `
+${form.name || "Your Name"}
+${[form.email, form.phone, form.location].filter(Boolean).join(" | ")}
+
+${form.summary ? `PROFESSIONAL SUMMARY\n${form.summary}\n` : ""}
+${form.skills ? `SKILLS\n${form.skills}\n` : ""}
+${form.experience ? `WORK EXPERIENCE\n${form.experience}\n` : ""}
+${form.education ? `EDUCATION\n${form.education}\n` : ""}
+${form.certifications ? `CERTIFICATIONS\n${form.certifications}\n` : ""}
+    `.trim();
+
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${form.name || "resume"}_resume.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="dashboard">
@@ -37,7 +68,7 @@ export default function ResumeBuilder() {
           <input placeholder="Python, React, SQL..." value={form.skills} onChange={(e) => update("skills", e.target.value)} />
 
           <label>Work Experience</label>
-          <textarea rows={4} placeholder="Job Title at Company (Year - Year)&#10;- Achievement 1&#10;- Achievement 2" value={form.experience} onChange={(e) => update("experience", e.target.value)} />
+          <textarea rows={4} placeholder={"Job Title at Company (Year - Year)\n- Achievement 1\n- Achievement 2"} value={form.experience} onChange={(e) => update("experience", e.target.value)} />
 
           <label>Education</label>
           <textarea rows={3} placeholder="Degree, University (Year)" value={form.education} onChange={(e) => update("education", e.target.value)} />
@@ -45,9 +76,14 @@ export default function ResumeBuilder() {
           <label>Certifications</label>
           <textarea rows={2} placeholder="Certification Name, Issuer (Year)" value={form.certifications} onChange={(e) => update("certifications", e.target.value)} />
 
-          <button className="btn-primary" onClick={handlePrint} style={{ marginTop: "1rem" }}>
-            Download / Print Resume
-          </button>
+          <div className="resume-actions">
+            <button className="btn-secondary" onClick={handleSave}>
+              {saved ? "Saved ✓" : "Save"}
+            </button>
+            <button className="btn-primary" onClick={handleDownload}>
+              Download
+            </button>
+          </div>
         </div>
 
         <div className="resume-preview" id="resume-preview">

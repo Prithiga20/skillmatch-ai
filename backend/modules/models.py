@@ -1,53 +1,25 @@
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+import os
+from dotenv import load_dotenv
 
-db = SQLAlchemy()
+load_dotenv()
 
+client = MongoClient(os.getenv("MONGO_URI", "mongodb://localhost:27017/skillmatch"))
+db = client.get_default_database()
 
-class User(db.Model):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(256), nullable=False)
-    role = db.Column(db.String(20), nullable=False)  # 'seeker' or 'recruiter'
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+users_col = db["users"]
+resumes_col = db["resumes"]
+jobs_col = db["jobs"]
+applications_col = db["applications"]
 
-    resume = db.relationship("Resume", backref="user", uselist=False)
-    applications = db.relationship("Application", backref="user")
-
-
-class Resume(db.Model):
-    __tablename__ = "resumes"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    raw_text = db.Column(db.Text)
-    skills = db.Column(db.Text)       # comma-separated
-    experience = db.Column(db.Text)
-    education = db.Column(db.Text)
-    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+# Indexes
+users_col.create_index("email", unique=True)
+applications_col.create_index([("user_id", 1), ("job_id", 1)], unique=True)
 
 
-class Job(db.Model):
-    __tablename__ = "jobs"
-    id = db.Column(db.Integer, primary_key=True)
-    recruiter_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    title = db.Column(db.String(150), nullable=False)
-    company = db.Column(db.String(150), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    required_skills = db.Column(db.Text, nullable=False)  # comma-separated
-    location = db.Column(db.String(100))
-    experience_required = db.Column(db.String(50))
-    posted_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    applications = db.relationship("Application", backref="job")
-
-
-class Application(db.Model):
-    __tablename__ = "applications"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    job_id = db.Column(db.Integer, db.ForeignKey("jobs.id"), nullable=False)
-    match_score = db.Column(db.Float, default=0.0)
-    status = db.Column(db.String(30), default="applied")  # applied, shortlisted, rejected
-    applied_at = db.Column(db.DateTime, default=datetime.utcnow)
+def str_id(doc):
+    """Convert ObjectId _id to string id in a document."""
+    if doc and "_id" in doc:
+        doc["id"] = str(doc.pop("_id"))
+    return doc

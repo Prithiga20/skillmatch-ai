@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from .models import db, Resume, Job
+from bson.objectid import ObjectId
+from .models import resumes_col, jobs_col
 from .matcher import compute_match_score
 
 match_bp = Blueprint("match", __name__)
@@ -9,23 +10,24 @@ match_bp = Blueprint("match", __name__)
 @match_bp.route("/recommendations", methods=["GET"])
 @jwt_required()
 def recommend_jobs():
-    user_id = int(get_jwt_identity())
-    resume = Resume.query.filter_by(user_id=user_id).first()
-    if not resume or not resume.skills:
+    user_id = get_jwt_identity()
+    resume = resumes_col.find_one({"user_id": user_id})
+    if not resume or not resume.get("skills"):
         return jsonify({"error": "Upload a resume first"}), 400
 
-    candidate_skills = [s.strip() for s in resume.skills.split(",") if s.strip()]
-    jobs = Job.query.all()
+    candidate_skills = resume["skills"] if isinstance(resume["skills"], list) else [s.strip() for s in resume["skills"].split(",") if s.strip()]
+    jobs = list(jobs_col.find())
 
     scored = []
     for job in jobs:
-        job_skills = [s.strip() for s in job.required_skills.split(",") if s.strip()]
+        skills = job.get("required_skills", "")
+        job_skills = skills if isinstance(skills, list) else [s.strip() for s in skills.split(",") if s.strip()]
         score = compute_match_score(candidate_skills, job_skills)
         scored.append({
-            "id": job.id,
-            "title": job.title,
-            "company": job.company,
-            "location": job.location,
+            "id": str(job["_id"]),
+            "title": job["title"],
+            "company": job["company"],
+            "location": job.get("location", ""),
             "required_skills": job_skills,
             "match_score": score,
         })
@@ -34,27 +36,31 @@ def recommend_jobs():
     return jsonify(scored[:10])
 
 
-@match_bp.route("/candidates/<int:job_id>", methods=["GET"])
+@match_bp.route("/candidates/<job_id>", methods=["GET"])
 @jwt_required()
 def recommend_candidates(job_id):
     claims = get_jwt()
     if claims["role"] != "recruiter":
         return jsonify({"error": "Unauthorized"}), 403
 
-    job = Job.query.get_or_404(job_id)
-    job_skills = [s.strip() for s in job.required_skills.split(",") if s.strip()]
+    job = jobs_col.find_one({"_id": ObjectId(job_id)})
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
 
-    resumes = Resume.query.all()
+    skills = job.get("required_skills", "")
+    job_skills = skills if isinstance(skills, list) else [s.strip() for s in skills.split(",") if s.strip()]
+
+    resumes = list(resumes_col.find())
     scored = []
     for resume in resumes:
-        if not resume.skills:
+        if not resume.get("skills"):
             continue
-        candidate_skills = [s.strip() for s in resume.skills.split(",") if s.strip()]
+        candidate_skills = resume["skills"] if isinstance(resume["skills"], list) else [s.strip() for s in resume["skills"].split(",") if s.strip()]
         score = compute_match_score(candidate_skills, job_skills)
         scored.append({
-            "user_id": resume.user_id,
+            "user_id": resume["user_id"],
             "skills": candidate_skills,
-            "experience": resume.experience,
+            "experience": resume.get("experience", ""),
             "match_score": score,
         })
 
