@@ -395,3 +395,216 @@ body {
 .status-badge.admin { background: #fef3c7; color: #92400e; }
 .status-badge.seeker { background: #e8f4fd; color: #2b6cb0; }
 .status-badge.recruiter { background: #e6ffed; color: #276749; }
+
+/* Skill Gap */
+.skill-gap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.skill-box {
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.skill-box.matched { background: #f0fff4; border: 1px solid #9ae6b4; }
+.skill-box.missing { background: #fff5f5; border: 1px solid #feb2b2; }
+
+.skill-box h4 { margin-bottom: 0.75rem; font-size: 0.95rem; }
+
+.skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.skill-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.skill-tag.green { background: #c6f6d5; color: #276749; }
+.skill-tag.red { background: #fed7d7; color: #c53030; }
+
+/* Courses */
+.course-list { display: grid; gap: 0.75rem; }
+
+.course-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8faff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  gap: 1rem;
+}
+
+.course-skill { font-size: 0.85rem; color: #666; margin-bottom: 0.2rem; }
+.course-name { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
+
+.platform-badge {
+  background: #ebf4ff;
+  color: #2b6cb0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+}
+
+/* Interview Prep */
+.question-list { display: grid; gap: 1rem; }
+
+.question-card {
+  background: #f8faff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.question-text { margin-bottom: 0.5rem; font-size: 0.95rem; }
+
+.question-card textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+/* Chatbot */
+.chat-window {
+  height: 400px;
+  overflow-y: auto;
+  background: #f8faff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.chat-bubble {
+  max-width: 75%;
+  padding: 0.6rem 1rem;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.chat-bubble.bot {
+  background: #e8f4fd;
+  color: #1a1a2e;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble.user {
+  background: #4f8ef7;
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-input {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.chat-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Resume Builder */
+.resume-builder-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.resume-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resume-form label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+  margin-top: 0.25rem;
+}
+
+.resume-form input,
+.resume-form textarea {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  width: 100%;
+}
+
+.resume-preview {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 2rem;
+  min-height: 600px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.resume-header {
+  border-bottom: 2px solid #4f8ef7;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.resume-header h1 { font-size: 1.6rem; color: #1a1a2e; }
+.resume-header p { color: #666; font-size: 0.85rem; margin-top: 0.3rem; }
+
+.resume-section { margin-bottom: 1.2rem; }
+
+.resume-section h3 {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4f8ef7;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.3rem;
+  margin-bottom: 0.6rem;
+}
+
+.resume-pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: #333;
+  line-height: 1.6;
+}
+
+@media print {
+  .navbar, .resume-form, .dashboard > h2 { display: none; }
+  .resume-builder-layout { grid-template-columns: 1fr; }
+  .resume-preview { box-shadow: none; border: none; }
+}
+
+@media (max-width: 768px) {
+  .skill-gap-grid, .resume-builder-layout { grid-template-columns: 1fr; }
+}

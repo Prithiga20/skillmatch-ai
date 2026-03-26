@@ -8,6 +8,10 @@ import SeekerDashboard from "./pages/SeekerDashboard";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import JobListings from "./pages/JobListings";
+import SkillGap from "./pages/SkillGap";
+import InterviewPrep from "./pages/InterviewPrep";
+import Chatbot from "./pages/Chatbot";
+import ResumeBuilder from "./pages/ResumeBuilder";
 import "./App.css";
 
 function ProtectedRoute({ children, role }) {
@@ -51,6 +55,10 @@ function AppRoutes() {
               </ProtectedRoute>
             }
           />
+          <Route path="/skill-gap" element={<ProtectedRoute role="seeker"><SkillGap /></ProtectedRoute>} />
+          <Route path="/interview-prep" element={<ProtectedRoute role="seeker"><InterviewPrep /></ProtectedRoute>} />
+          <Route path="/resume-builder" element={<ProtectedRoute role="seeker"><ResumeBuilder /></ProtectedRoute>} />
+          <Route path="/chatbot" element={<Chatbot />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>

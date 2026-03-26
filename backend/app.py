@@ -10,6 +10,7 @@ from modules.resume import resume_bp
 from modules.jobs import jobs_bp
 from modules.match import match_bp
 from modules.admin import admin_bp
+from modules.enhance import enhance_bp
 
 load_dotenv()
 
@@ -30,6 +31,7 @@ app.register_blueprint(resume_bp, url_prefix="/api/resume")
 app.register_blueprint(jobs_bp, url_prefix="/api/jobs")
 app.register_blueprint(match_bp, url_prefix="/api/match")
 app.register_blueprint(admin_bp, url_prefix="/api/admin")
+app.register_blueprint(enhance_bp, url_prefix="/api/enhance")
 
 with app.app_context():
     db.create_all()
